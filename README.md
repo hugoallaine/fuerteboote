@@ -92,7 +92,7 @@ Details:
   can only select an existing (signed) entry.
 - With `useOSProber`, a boot-time service re-signs the EFI binaries of the ESP, so a
   Windows update that replaces `bootmgfw.efi` does not break the Windows entry.
-- Keys: `/var/lib/sbctl` (Secure Boot, sbctl) and `/var/lib/grub-secureboot` (GPG,
+- Keys: `/var/lib/sbctl` (Secure Boot, sbctl) and `/var/lib/fuerteboote` (GPG,
   RSA 4096, no passphrase because signing runs unattended). Both root only.
   If the GPG key is lost, a new one is generated and GRUB is reinstalled with it.
 
@@ -153,7 +153,7 @@ Secure Boot is only as strong as its weakest step. All of these are needed:
    previous GRUB image signed with the old key is refused by the firmware). On a new
    install, the keys created by `autoGenerateKeys` are fresh.
 4. **Protect and back up the keys.** `/var/lib/sbctl` (Secure Boot) and
-   `/var/lib/grub-secureboot` (GPG) are root-only on the encrypted root. Keep an
+   `/var/lib/fuerteboote` (GPG) are root-only on the encrypted root. Keep an
    encrypted offline backup of `/var/lib/sbctl` (losing it means re-enrolling new keys);
    never put them in a Git repository or the Nix store.
 5. **Keep the revocation list (dbx) up to date**: `services.fwupd.enable = true`, then

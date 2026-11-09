@@ -15,7 +15,7 @@ let
 
   cfg = config.boot.loader.grub;
   sb = cfg.secureBoot;
-  state = "/var/lib/grub-secureboot";
+  state = "/var/lib/fuerteboote";
 
   # Must be the same derivation grub.nix hands to install-grub.pl, so that the
   # modules installed in /boot can be compared byte for byte.
@@ -45,7 +45,7 @@ let
         removable = "BOOTAA64.EFI";
       };
     }
-    .${target} or (throw "grub-secureboot: unsupported GRUB target ${target}");
+    .${target} or (throw "fuerteboote: unsupported GRUB target ${target}");
 
   # Mirrors the ESP / bootloader-id logic of grub.nix for each mirrored boot.
   boots = map (
@@ -72,7 +72,7 @@ let
   efiBinaries = lib.escapeShellArgs (map (b: b.efiBinary) boots);
 
   tool = pkgs.writeShellApplication {
-    name = "grub-secureboot";
+    name = "fuerteboote";
     runtimeInputs = with pkgs; [
       coreutils
       diffutils
@@ -84,7 +84,7 @@ let
       sbctl
       sbsigntool
     ];
-    text = builtins.readFile ./grub-secureboot.sh;
+    text = builtins.readFile ./fuerteboote.sh;
   };
 in
 {
@@ -175,7 +175,7 @@ in
           boot.loader.grub.secureBoot: no encrypted root filesystem (boot.initrd.luks.devices) found.
           Without one, anyone with access to the disk can modify the Nix store or steal the
           signing keys, which defeats Secure Boot. Ignore this if you use another encryption
-          (e.g. ZFS native encryption). See the Security section of the grub-secureboot README.
+          (e.g. ZFS native encryption). See the Security section of the fuerteboote README.
         '';
 
     # Kernels must live on /boot so they can be signed and get a .sig next to them.
@@ -216,7 +216,7 @@ in
     '';
 
     # Windows updates replace bootmgfw.efi, which invalidates its GPG signature.
-    systemd.services.grub-secureboot-esp = mkIf cfg.useOSProber {
+    systemd.services.fuerteboote-esp = mkIf cfg.useOSProber {
       description = "Re-sign EFI binaries on the ESP for GRUB Secure Boot";
       wantedBy = [ "multi-user.target" ];
       after = [ "local-fs.target" ];

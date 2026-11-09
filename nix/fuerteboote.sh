@@ -1,4 +1,4 @@
-# grub-secureboot: key setup, integrity checks and signing around nixpkgs' install-grub.pl.
+# fuerteboote: key setup, integrity checks and signing around nixpkgs' install-grub.pl.
 #
 # Trust model: everything GRUB reads from /boot gets a detached GPG signature
 # (GRUB runs with check_signatures=enforce), and everything the firmware loads
@@ -6,7 +6,7 @@
 # We only sign content we can trace back to the Nix store or that
 # install-grub.pl rewrote during this run; anything else is restored first.
 
-STATE=/var/lib/grub-secureboot
+STATE=/var/lib/fuerteboote
 export GNUPGHOME=$STATE/gnupg
 PUBKEY=$STATE/pubkey.gpg
 MANIFEST=$STATE/signed-kernels
@@ -14,7 +14,7 @@ DB_CERT=/var/lib/sbctl/keys/db/db.pem
 
 shopt -s nullglob
 
-log() { echo "grub-secureboot: $*" >&2; }
+log() { echo "fuerteboote: $*" >&2; }
 die() {
   log "error: $*"
   exit 1
@@ -289,5 +289,5 @@ case $cmd in
   sign-esp) cmd_sign_esp "$@" ;;
   enroll) cmd_enroll "$@" ;;
   check-enrolled) cmd_check_enrolled ;;
-  *) die "usage: grub-secureboot {prepare|sign|sign-esp|enroll|check-enrolled} ..." ;;
+  *) die "usage: fuerteboote {prepare|sign|sign-esp|enroll|check-enrolled} ..." ;;
 esac

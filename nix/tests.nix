@@ -5,7 +5,7 @@ let
 
   efivar = name: "/sys/firmware/efi/efivars/${name}-8be4df61-93ca-11d2-aa0d-00e098032b8c";
   dbCert = "/var/lib/sbctl/keys/db/db.pem";
-  gpgHome = "/var/lib/grub-secureboot/gnupg";
+  gpgHome = "/var/lib/fuerteboote/gnupg";
   shell = "${pkgs.edk2-uefi-shell}/shell.efi";
 
   baseConfig =
@@ -89,7 +89,7 @@ let
       testScript,
     }:
     pkgs.testers.runNixOSTest {
-      name = "grub-secureboot-${name}";
+      name = "fuerteboote-${name}";
       nodes.machine = {
         imports = [
           baseConfig
@@ -127,7 +127,7 @@ let
       result = builtins.tryEval (evalSystem config).config.system.build.toplevel.drvPath;
     in
     assert lib.assertMsg (result.success == shouldSucceed) "eval-${name}: expected success = ${lib.boolToString shouldSucceed}";
-    pkgs.runCommand "grub-secureboot-eval-${name}" { } "touch $out";
+    pkgs.runCommand "fuerteboote-eval-${name}" { } "touch $out";
 
   # The "no encrypted root" warning must appear exactly when there is no encrypted root.
   evalWarns =
@@ -136,7 +136,7 @@ let
       warns = lib.any (lib.hasInfix "no encrypted root filesystem") (evalSystem config).config.warnings;
     in
     assert lib.assertMsg (warns == shouldWarn) "eval-${name}: expected warning = ${lib.boolToString shouldWarn}";
-    pkgs.runCommand "grub-secureboot-eval-${name}" { } "touch $out";
+    pkgs.runCommand "fuerteboote-eval-${name}" { } "touch $out";
 
   attacks = {
     grub-cfg = "echo 'set check_signatures=no' >> /boot/grub/grub.cfg";
@@ -269,7 +269,7 @@ in
           boot()
 
       with subtest("An EFI binary not signed for the firmware is refused"):
-          machine.succeed(f"cp ${shell} {bootmgfw} && systemctl restart grub-secureboot-esp.service")
+          machine.succeed(f"cp ${shell} {bootmgfw} && systemctl restart fuerteboote-esp.service")
           next_entry(title)
           machine.shutdown()
           machine.start()
@@ -349,7 +349,7 @@ in
     testScript = ''
       boot()
       old = machine.succeed("sha256sum /boot/grub/secureboot-pubkey.gpg")
-      machine.succeed("rm -rf /var/lib/grub-secureboot")
+      machine.succeed("rm -rf /var/lib/fuerteboote")
       out = rebuild()
       t.assertIn("forcing grub-install", out)
       t.assertNotEqual(old, machine.succeed("sha256sum /boot/grub/secureboot-pubkey.gpg"))
