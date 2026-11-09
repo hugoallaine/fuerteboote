@@ -111,7 +111,7 @@ in
         enrolling the keys automatically when the firmware is in Setup Mode.
         Enrolling keys without the Microsoft certificates can make machines whose
         option ROMs (e.g. GPUs) are signed by Microsoft unbootable; keep
-        `--microsoft` in {option}`extraArgs` unless you know what you are doing
+        `--microsoft` in {option}`extraArgs` unless you know what you are doing.
       '';
       extraArgs = mkOption {
         type = types.listOf types.str;
